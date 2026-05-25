@@ -30,3 +30,18 @@ Clone the repository and install the required dependencies:
 git clone [https://github.com/your-username/mona.git](https://github.com/your-username/mona.git)
 cd mona
 pip install -r requirements.txt
+mona/
+├── .github/workflows/      # CI/CD pipelines
+├── assets/                 # Architecture diagrams, logos, and UI screenshots
+├── configs/                # Model and training configuration files (YAML)
+├── data/                   # Data preprocessing and loading scripts
+├── mona/                   # Main source code package
+│   ├── __init__.py
+│   ├── models/             # DiT (Diffusion Transformer) & Spatio-Temporal VAE blocks
+│   ├── pipeline.py         # Long-video generation pipeline
+│   └── utils/              # Memory management, chunking, and streaming utils
+├── tests/                  # Unit and integration tests
+├── .gitignore
+├── LICENSE                 # e.g., Apache 2.0 or MIT
+├── README.md               # The main documentation (see below)
+└── requirements.txt        # Python dependencies
