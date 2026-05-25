@@ -1,0 +1,17 @@
+# configs/default.yaml
+model:
+  name: "mona-v1-base"
+  resolution: "1080p"
+  fps: 24
+  max_duration_seconds: 1800
+  latent_channels: 4
+
+hardware:
+  enable_streaming: true
+  chunk_size_seconds: 10
+  device: "cuda"
+
+training:
+  batch_size: 1
+  learning_rate: 1e-5
+  mixed_precision: "fp16"
