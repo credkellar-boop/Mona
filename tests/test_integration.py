@@ -15,7 +15,6 @@ def test_vae_and_dit_shape_matching():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
     # 1. Simulate a mini input video tensor: (Batch, Channels, Time/Frames, Height, Width)
-    # 24 frames, 3 channels, 256x256 spatial resolution
     dummy_video = torch.randn(1, 3, 24, 256, 256).to(device)
     
     # 2. Initialize Models with minimal footprints for testing
@@ -28,16 +27,30 @@ def test_vae_and_dit_shape_matching():
     b, c, t, h, w = latents.shape
     assert c == 4, f"Expected 4 latent channels, got {c}"
     
-    # 4. Flatten latents to tokens for DiT processing
-    latents_flattened = latents.permute(0, 2, 3, 4, 1).reshape(b, t * h * w, c)
+    # 4. Patchify latents into 4x4 spatial blocks for the DiT Transformer Tokens
+    p = 4
+    h_p, w_p = h // p, w // p
+    
+    # Reshape and permute to group 4x4 pixels together across channels
+    # From: (Batch, Channels, Time, H_patches, Patch_H, W_patches, Patch_W)
+    # To:   (Batch, Time, H_patches, W_patches, Channels, Patch_H, Patch_W)
+    latents_patched = latents.view(b, c, t, h_p, p, w_p, p)
+    latents_patched = latents_patched.permute(0, 2, 3, 5, 1, 4, 6).contiguous()
+    
+    # Flatten into final tokens: (Batch, Total_Tokens, Channels * 4 * 4)
+    latents_flattened = latents_patched.view(b, t * h_p * w_p, c * p * p)
+    
     dummy_condition = torch.randn(b, 128).to(device)
     
     # 5. Test DiT Denoising Pass
     dit_output = dit(latents_flattened, dummy_condition)
     assert dit_output.shape == latents_flattened.shape, "DiT output shape must match flattened input latent shape"
     
-    # 6. Reconstruct back to unflattened latents and decode to pixels
-    latents_reconstructed = dit_output.view(b, t, h, w, c).permute(0, 4, 1, 2, 3)
+    # 6. Unpatchify tokens back into standard 3D latent grid shapes
+    latents_reconstructed = dit_output.view(b, t, h_p, w_p, c, p, p)
+    latents_reconstructed = latents_reconstructed.permute(0, 4, 1, 2, 5, 3, 6).contiguous()
+    latents_reconstructed = latents_reconstructed.view(b, c, t, h, w)
+    
     decoded_video = decoder(latents_reconstructed)
     
     assert decoded_video.shape[1] == 3, "Decoded video must have 3 color channels (RGB)"
@@ -57,8 +70,6 @@ async def test_sfu_room_constraints():
     # Assert maximum room capacity constraint
     assert room_manager.MAX_PARTICIPANTS == 50
     
-    # Simulate a client attempting to join the signaling space
-    # (Using a try-except block since full browser SDP negotiation requires network interfaces)
     try:
         await room_manager.join_room(
             room_id=room_id, 
@@ -67,7 +78,6 @@ async def test_sfu_room_constraints():
             is_publisher=True
         )
     except Exception as e:
-        # If it fails due to local network/engine configuration, it shouldn't be a capacity issue
         assert "maximum capacity" not in str(e)
         
     # Verify room tracking initialization
