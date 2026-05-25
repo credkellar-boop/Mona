@@ -23,7 +23,7 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgl1 libglx-mesa0 libglib2.0-0
+        sudo apt-get install -y libgl1 libglx-mesa0 libgl1-mesa-glx
 
     - name: Install Python Dependencies
       run: |
@@ -33,17 +33,7 @@ jobs:
 
     - name: Run Integration Test Suite
       env:
-        GEMINI_API_KEY: "ci_test_dummy_key"
+        GEMINI_API_KEY: 'ci_test_dummy_key'
         PYTHONPATH: .
-      run: |
-        pytest tests/test_integration.py -v
-
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest pytest-asyncio
-
-    - name: Run Integration Test Suite
-      env:
-        GEMINI_API_KEY: "ci_test_dummy_key"
       run: |
         pytest tests/test_integration.py -v
