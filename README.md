@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/github/license/credkellar-boop/mona?color=orange&style=flat-square)](LICENSE)
 
 
-An open-source, ultra-high-definition video generation framework capable of producing up to 30 minutes of continuous, temporally coherent video at **8K Cinematic Resolution ($7680 \times 4320$)**. Mona achieves this using a hierarchical combination of Spatio-Temporal Diffusion Transformers (DiT), 3D Causal VAE architectures, Gemini-driven narrative orchestration, and tile-based spatial super-resolution.
+An open-source, ultra-high-definition video generation framework capable of producing up to 30 minutes of continuous, temporally coherent video at **8K Cinematic Resolution**. Mona achieves this using a hierarchical combination of Spatio-Temporal Diffusion Transformers (DiT), 3D Causal VAE architectures, Gemini-driven narrative orchestration, and tile-based spatial super-resolution.
 
 [Features](#features) • [Project Structure](#-project-structure) • [Installation](#installation) • [Getting Started](#getting-started) • [Production Deployment](#production-deployment)
 
