@@ -1,0 +1,10 @@
+torch>=2.2.0
+torchvision
+torchaudio
+transformers>=4.38.0
+diffusers>=0.27.0
+accelerate
+einops
+numpy
+opencv-python
+tqdm
