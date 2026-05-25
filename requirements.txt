@@ -7,4 +7,5 @@ accelerate
 einops
 numpy
 opencv-python
+google-generativeai
 tqdm
