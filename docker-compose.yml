@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  # Service 1: The Live Streaming & 50-Person Group Conferencing Node
+  live-media-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mona_live_server
+    command: python live_server.py
+    ports:
+      - "8080:8080"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    restart: unless-stopped
+    networks:
+      - mona-network
+
+  # Service 2: The Compute Worker for 8K Generation and Model Training
+  ai-compute-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mona_ai_worker
+    # Keep the container alive but idle so you can execute manual inference or training runs
+    command: tail -f /dev/null
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - .:/app
+      - mona-cache:/root/.cache
+    networks:
+      - mona-network
+    # Production GPU Passthrough Allocation
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+networks:
+  mona-network:
+    driver: bridge
+
+volumes:
+  mona-cache:
+    name: mona_model_cache
