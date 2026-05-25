@@ -1,23 +1,14 @@
-# In tests/test_integration.py
-
-# ... (Previous VAE encoding step)
-latents = encoder(dummy_video)
-b, c, t, h, w = latents.shape
-
-# Patch size (p) must be defined as used in your DiT model (likely 4x4)
-p = 4 
-h_p, w_p = h // p, w // p
-
-# 1. Reshape to separate patches: (Batch, Channels, Time, H_p, P, W_p, P)
-latents_patched = latents.view(b, c, t, h_p, p, w_p, p)
-
-# 2. Permute to bring patch dimensions together: (Batch, Time, H_p, W_p, Channels, P, P)
-latents_patched = latents_patched.permute(0, 2, 3, 5, 1, 4, 6).contiguous()
-
-# 3. Flatten correctly: (Batch, Time * H_p * W_p, Channels * P * P)
-# This results in the specific feature dimension the DiT expects
-latents_flattened = latents_patched.view(b, t * h_p * w_p, c * p * p)
-
-# Pass to DiT
-dummy_condition = torch.randn(b, 128).to(device)
-dit_output = dit(latents_flattened, dummy_condition)
+def test_vae_and_dit_shape_matching():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    dummy_video = torch.randn(1, 3, 24, 256, 256).to(device)
+    
+    # 1. Initialize the models FIRST
+    encoder = SpatioTemporalVAEEncoder(in_channels=3, latent_channels=4, hidden_dim=32).to(device)
+    decoder = SpatioTemporalVAEDecoder(latent_channels=4, out_channels=3, hidden_dim=64).to(device)
+    dit = SpatioTemporalDiT(in_channels=4, hidden_size=128, depth=2, num_heads=2).to(device)
+    
+    # 2. Now you can use the encoder
+    latents = encoder(dummy_video)
+    b, c, t, h, w = latents.shape
+    
+    # ... (rest of your patchification and testing logic)
