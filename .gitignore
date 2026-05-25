@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# ==========================================
+# Mona Custom Video & Model Artifacts
+# ==========================================
+*.mp4
+*.mkv
+*.avi
+*.pt
+*.pth
+*.ckpt
+data/train_frames/
+output/
