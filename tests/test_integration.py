@@ -1,9 +1,10 @@
 import torch
-# Imports the model architectures from your 'mona' package
-from mona import SpatioTemporalVAEEncoder, SpatioTemporalVAEDecoder, SpatioTemporalDiT
+
+# UPDATE THIS LINE: Point directly to the python files where these classes live.
+# For example, if they are inside `mona/models.py`, it should be `from mona.models import ...`
+from mona.[YOUR_SUBMODULE_HERE] import SpatioTemporalVAEEncoder, SpatioTemporalVAEDecoder, SpatioTemporalDiT
 
 def test_vae_and_dit_shape_matching():
-    # Safely falls back to CPU on GitHub Actions runner
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dummy_video = torch.randn(1, 3, 24, 256, 256).to(device)
 
