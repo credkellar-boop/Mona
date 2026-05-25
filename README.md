@@ -20,7 +20,7 @@ An open-source, ultra-high-definition video generation framework capable of prod
 
 ## Features
 
-- **8K Cinematic Generation:** Generates up to 30 minutes of video scaled to true 8K ($7680 \times 4320$) at cinematic frame rates.
+- **8K Cinematic Generation:** Generates up to 30 minutes of video scaled to true 8K cinematic frame rates.
 - **Hierarchical Latent Upscaling:** To circumvent hardware VRAM limitations, the core architecture generates structural baselines at a lower latent resolution, passing frames through a tiled spatial upscaling network.
 - **Gemini Director Agent:** Leverages Gemini to map long-form narrative pacing, manage memory context states across sequential 10-second chunks, and maintain rigid character/environmental consistency.
 - **Spatio-Temporal DiT:** A Diffusion Transformer model utilizing modulated Adaptive LayerNorm (adaLN) to handle high-fidelity spatial details and continuous temporal motion.
