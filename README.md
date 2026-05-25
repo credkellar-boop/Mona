@@ -1,50 +1,61 @@
-# Mona 🎨🎬
+# Mona
 
-**Mona** is an open-source, long-form video generation framework designed to extend the boundaries of Spatio-Temporal Diffusion Transformers (DiT). While current state-of-the-art models like Sora excel at short, high-fidelity clips, Mona is architected specifically for **long-form narrative coherence**, supporting generations up to **30 minutes** in duration.
+<div align="center">
 
----
+[![Mona CI](https://img.shields.io/github/actions/workflow/status/credkellar-boop/mona/ci.yml?branch=main&logo=github-actions&logoColor=white&style=flat-square)](https://github.com/credkellar-boop/mona/actions)
+[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue?logo=python&logoColor=white&style=flat-square)](https://www.python.org)
+[![PyTorch](https://img.shields.io/badge/PyTorch-%3E%3D%202.2.0-ee4c2c?logo=pytorch&logoColor=white&style=flat-square)](https://pytorch.org)
+[![Gemini](https://img.shields.io/badge/Gemini%20AI-Orchestration-blueviolet?logo=googlegemini&logoColor=white&style=flat-square)](https://deepmind.google/technologies/gemini/)
+[![WebRTC SFU](https://img.shields.io/badge/WebRTC-SFU%20Enabled-green?logo=webrtc&logoColor=white&style=flat-square)](https://github.com/aiortc/aiortc)
+[![License](https://img.shields.io/github/license/credkellar-boop/mona?color=orange&style=flat-square)](LICENSE)
 
-## 🚀 Key Features
+An open-source, long-form video generation framework capable of producing up to 30 minutes of continuous, temporally coherent video using Spatio-Temporal Diffusion Transformers (DiT), 3D Causal VAE architecture, and Gemini-driven narrative orchestration. It also features a real-time, low-latency live streaming and 50-person group video chat server.
 
-*   **Extended Temporal Coherence:** Utilizes novel sliding-window attention and memory-augmented transformers to prevent narrative drift over long sequences.
-*   **Hierarchical Generation:** Generates a low-framerate "keyframe script" first, followed by parallelized temporal upsampling and interpolation chunks.
-*   **Infinite-Context VAE:** A streaming Spatio-Temporal VAE that processes video in continuous, overlapping latent blocks to eliminate VRAM bottlenecks.
-*   **Audio-Video Co-generation:** Latent-space alignment that syncs audio tracks dynamically over the 30-minute runtime.
+[Features](#features) • [Project Structure](#-project-structure) • [Installation](#installation) • [Getting Started](#getting-started) • [Production Deployment](#production-deployment)
 
----
-
-## 🛠️ Architecture Overview
-
-Generating 30 minutes of video ($1800\text{ seconds}$) at $24\text{ fps}$ requires processing $43,200$ frames. Standard attention mechanisms fail at this scale due to quadratic complexity. Mona solves this via:
-
-1.  **Recurrent Video Transformers (R-DiT):** Passing a compressed "memory state" from previous 1-minute blocks to subsequent blocks.
-2.  **Streaming Latent Decoding:** Instead of decoding the entire 30-minute latent space at once, Mona streams chunks to the GPU, decoding and stitching in real-time.
+</div>
 
 ---
 
-## 📦 Installation
+## Features
 
-Clone the repository and install the required dependencies:
+- **Long-Form Video Generation:** Generates up to 30 minutes of continuous 1080p video using sequential temporal chunking.
+- **Gemini Director Agent:** Leverages Gemini to map narrative pacing, manage memory context across chunks, and maintain character/asset consistency.
+- **Spatio-Temporal DiT:** A state-of-the-art Diffusion Transformer model designed to capture both spatial geometry and smooth temporal motions.
+- **3D Causal VAE:** Advanced spatio-temporal video compression that ensures past video frames cannot leak into future frames, saving local VRAM.
+- **Automated Dataset Engine:** Auto-captions raw training videos via the Gemini File API and cuts clips automatically.
+- **Real-Time Video Stack:** Includes a Selective Forwarding Unit (SFU) WebRTC signaling node capable of hosting 1-on-1 chats and up to 50-person group video rooms.
 
-```bash
-git clone [https://github.com/credkellar-boop/mona.git](https://github.com/credkellar-boop/mona.git)
+---
 
-cd mona
+## 📂 Project Structure
 
-pip install -r requirements.txt
+The repository is organized following clean Python software development practices:
 
+```text
 mona/
-├── .github/workflows/      # CI/CD pipelines
-├── assets/                 # Architecture diagrams, logos, and UI screenshots
-├── configs/                # Model and training configuration files (YAML)
-├── data/                   # Data preprocessing and loading scripts
-├── mona/                   # Main source code package
-│   ├── __init__.py
-│   ├── models/             # DiT (Diffusion Transformer) & Spatio-Temporal VAE blocks
-│   ├── pipeline.py         # Long-video generation pipeline
-│   └── utils/              # Memory management, chunking, and streaming utils
-├── tests/                  # Unit and integration tests
-├── .gitignore
-├── LICENSE                 # e.g., Apache 2.0 or MIT
-├── README.md               # The main documentation (see below)
-└── requirements.txt        # Python dependencies
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # Continuous Integration automated build pipelines
+├── configs/
+│   └── default.yaml           # Model hyperparameters and hardware configurations
+├── data/
+│   ├── train_frames/          # Local preprocessed training video clips (git-ignored)
+│   ├── annotations.txt        # Training frame-to-text annotation mappings
+│   ├── dataset.py             # PyTorch Custom Dataset & temporal loading modules
+│   └── auto_captioner.py      # Automated frame slicer and Gemini pipeline captioner
+├── mona/
+│   ├── __init__.py            # Exposes package initializations
+│   ├── pipeline.py            # Main generation pipeline & sliding-window context engine
+│   ├── models/
+│   │   ├── __init__.py        # Exposes DiT and VAE architectures
+│   │   ├── dit.py             # Spatio-Temporal Diffusion Transformer (adaLN modulation)
+│   │   └── vae.py             # 3D Causal Variational Autoencoder with Media Relays
+│   └── utils/
+│       ├── streaming.py       # Context/VRAM offloading utility banks
+│       └── live_sfu.py        # Asynchronous WebRTC SFU multiparty packet router
+├── live_server.py             # Aiohttp Signaling endpoint server for real-time video
+├── main.py                    # Root entry point for standard video inference runs
+├── train.py                   # Diffusion transformer training framework loop execution
+├── requirements.txt           # Unified external library package configurations
+└── README.md                  # System overview and deployment documentation
