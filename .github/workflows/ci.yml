@@ -34,5 +34,16 @@ jobs:
     - name: Run Integration Test Suite
       env:
         GEMINI_API_KEY: "ci_test_dummy_key"
+        PYTHONPATH: .
+      run: |
+        pytest tests/test_integration.py -v
+
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-asyncio
+
+    - name: Run Integration Test Suite
+      env:
+        GEMINI_API_KEY: "ci_test_dummy_key"
       run: |
         pytest tests/test_integration.py -v
