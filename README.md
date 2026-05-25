@@ -27,9 +27,12 @@ Generating 30 minutes of video ($1800\text{ seconds}$) at $24\text{ fps}$ requir
 Clone the repository and install the required dependencies:
 
 ```bash
-git clone [https://github.com/your-username/mona.git](https://github.com/your-username/mona.git)
+git clone [https://github.com/credkellar-boop/mona.git](https://github.com/credkellar-boop/mona.git)
+
 cd mona
+
 pip install -r requirements.txt
+
 mona/
 ├── .github/workflows/      # CI/CD pipelines
 ├── assets/                 # Architecture diagrams, logos, and UI screenshots
