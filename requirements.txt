@@ -9,3 +9,5 @@ numpy
 opencv-python
 google-generativeai
 tqdm
+aiortc
+aiohttp
