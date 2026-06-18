@@ -1,5 +1,3 @@
-# 1. Build the image
-docker build -t 12345678910dmac/mona:latest .
-
-# 2. Push the image
-docker push 12345678910dmac/mona:latest
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t 12345678910dmac/mona:latest \
+  --push .
