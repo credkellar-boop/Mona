@@ -1,23 +1,5 @@
-# Dockerfile
+# 1. Build the image
+docker build -t 12345678910dmac/mona:latest .
 
-FROM python:3.10-slim
-
-# Install modern system dependencies for OpenCV and WebRTC
-RUN apt-get update && apt-get install -y \
-    libgl1 \
-    libglx-mesa0 \
-    libglib2.0-0 \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 8080
-
-CMD ["python", "live_server.py"]
+# 2. Push the image
+docker push 12345678910dmac/mona:latest
